@@ -1,0 +1,10 @@
+.employee-card {
+  display: inline-block;
+  padding: 4px;
+  background-color: #d8dcde;
+  font-size: 12px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  outline: 1px solid #b0b8be;
+  font-family: "Roboto Condensed", sans-serif;
+}

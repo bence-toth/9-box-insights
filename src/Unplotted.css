@@ -1,0 +1,14 @@
+.unplotted {
+  background-color: #f8f9f9;
+  border-bottom: 8px solid white;
+}
+
+.unplotted header {
+  background-color: hsla(0deg 0% 0% / 10%);
+  padding: 4px;
+}
+
+.unplotted-contents {
+  padding: 4px;
+  min-height: 34px;
+}

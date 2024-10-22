@@ -1,0 +1,13 @@
+.biases {
+  background-color: #f8f9f9;
+}
+
+.biases header {
+  background-color: hsla(0deg 0% 0% / 10%);
+  padding: 4px;
+}
+
+.biases-contents {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}

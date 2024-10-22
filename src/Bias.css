@@ -1,0 +1,19 @@
+.bias {
+  padding: 4px;
+  padding-bottom: 8px;
+  text-align: center;
+}
+
+.bias.significant {
+  background-color: #cd3642;
+  color: #f8f9f9;
+}
+
+.bias.insignificant {
+  background-color: #037f52;
+  color: #f8f9f9;
+}
+
+.bias .title {
+  font-weight: bold;
+}
