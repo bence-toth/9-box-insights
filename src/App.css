@@ -2,15 +2,120 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
+  border-bottom: 8px solid white;
 }
 
 .box {
   height: 25vh;
-  border: 1px solid red;
+  background-color: #f8f9f9;
+}
+
+.box-9 {
+  background-color: #cce0f1;
+}
+
+.box-6,
+.box-8 {
+  background-color: #ddecf8;
+}
+
+.box-2,
+.box-4 {
+  background-color: #fff3e4;
+}
+
+.box-1 {
+  background-color: #ffe6cb;
+}
+
+.box header {
+  display: flex;
+  justify-content: space-between;
+  background-color: hsla(0deg 0% 0% / 10%);
+  padding: 4px;
+}
+
+.box.out-of-range header {
+  background-color: #cd3642;
+  color: #f8f9f9;
+}
+
+.box-contents {
+  padding: 4px;
+}
+
+.unplotted {
+  background-color: #f8f9f9;
+  border-bottom: 8px solid white;
+}
+
+.unplotted header {
+  background-color: hsla(0deg 0% 0% / 10%);
+  padding: 4px;
+}
+
+.unplotted-contents {
+  padding: 4px;
+  min-height: 34px;
 }
 
 .employee-card {
   display: inline-block;
-  padding: 10px;
-  background-color: red;
+  padding: 4px;
+  background-color: #d8dcde;
+  font-size: 12px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  outline: 1px solid #b0b8be;
+  font-family: "Roboto Condensed", sans-serif;
+}
+
+.team-filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 8px;
+  gap: 12px;
+  background-color: hsla(0deg 0% 0% / 10%);
+  border-bottom: 8px solid white;
+}
+
+.team-filters label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.biases {
+  background-color: #f8f9f9;
+}
+
+.biases header {
+  background-color: hsla(0deg 0% 0% / 10%);
+  padding: 4px;
+}
+
+.biases-contents {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.bias {
+  padding: 4px;
+  text-align: center;
+}
+
+.bias.significant {
+  background-color: #cd3642;
+  color: #f8f9f9;
+}
+
+.bias.insignificant {
+  background-color: #037f52;
+  color: #f8f9f9;
+}
+
+.bias .title {
+  font-weight: bold;
 }

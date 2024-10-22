@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { jStat } from "jstat";
 
 import "./App.css";
 
-import employeeData from "./employees.example";
+import employeeData from "./employees";
+import classNames from "classnames";
 
 const enrichedEmployeeData = employeeData.map((employee, employeeIndex) => ({
   id: employeeIndex,
@@ -12,8 +14,32 @@ const enrichedEmployeeData = employeeData.map((employee, employeeIndex) => ({
   box: null,
 }));
 
-const calculateCorrelation = (data: { x: number; y: number }[]): number => {
+const calculatePValue = (r: number, n: number): number => {
+  const t = (r * Math.sqrt(n - 2)) / Math.sqrt(1 - r * r);
+  const df = n - 2; // degrees of freedom
+
+  // Ensure degrees of freedom is positive
+  if (df <= 0) {
+    return NaN; // Not enough data to compute p-value
+  }
+
+  // Calculate two-tailed p-value
+  return 2 * (1 - jStat.studentt.cdf(Math.abs(t), df));
+};
+
+interface CorrelationResult {
+  correlation: number;
+  pValue: number;
+}
+
+const calculateCorrelationWithPValue = (
+  data: { x: number; y: number }[]
+): CorrelationResult => {
   const n = data.length;
+  if (n < 3) {
+    return { correlation: NaN, pValue: NaN }; // Not enough data
+  }
+
   const sumX = data.reduce((sum, val) => sum + val.x, 0);
   const sumY = data.reduce((sum, val) => sum + val.y, 0);
   const sumXY = data.reduce((sum, val) => sum + val.x * val.y, 0);
@@ -25,7 +51,15 @@ const calculateCorrelation = (data: { x: number; y: number }[]): number => {
     (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY)
   );
 
-  return denominator ? numerator / denominator : 0;
+  const r = denominator !== 0 ? numerator / denominator : 0;
+
+  if (r === 1 || r === -1) {
+    return { correlation: r, pValue: 0 };
+  }
+
+  const pValue = calculatePValue(r, n);
+
+  return { correlation: r, pValue };
 };
 
 interface Employee {
@@ -60,19 +94,95 @@ interface BoxProps {
   handleDrop: (employeeId: number, boxNumber: number) => void;
   children: React.ReactNode;
   ratio: number;
+  threshold?: { min?: number; max?: number };
+  hasReachedGroupThreshold: boolean;
 }
 
-const Box = ({ boxNumber, handleDrop, children, ratio }: BoxProps) => {
+const Box = ({
+  boxNumber,
+  handleDrop,
+  children,
+  ratio,
+  threshold,
+  hasReachedGroupThreshold,
+}: BoxProps) => {
   const [, drop] = useDrop(() => ({
     accept: "EMPLOYEE",
     drop: (employee: Employee) => handleDrop(employee.id, boxNumber),
   }));
 
   return (
-    <div ref={drop} className="box">
-      <p>Box {boxNumber}</p>
-      <div>{ratio}</div>
-      {children}
+    <div
+      ref={drop}
+      className={classNames("box", `box-${boxNumber}`, {
+        "out-of-range":
+          (threshold?.min && ratio < threshold?.min) ||
+          (threshold?.max && ratio > threshold?.max) ||
+          hasReachedGroupThreshold,
+      })}
+    >
+      <header>
+        <div>Box {boxNumber}</div>
+        <div className="ratio">{(ratio * 100).toFixed(0)}%</div>
+      </header>
+      <div className="box-contents">{children}</div>
+    </div>
+  );
+};
+
+interface UnplottedProps {
+  employees: Employee[];
+  handleDrop: (employeeId: number, boxNumber: number | null) => void;
+}
+
+const Unplotted = ({ employees, handleDrop }: UnplottedProps) => {
+  const [, dropBack] = useDrop(() => ({
+    accept: "EMPLOYEE",
+    drop: (employee: Employee) => handleDrop(employee.id, null),
+  }));
+
+  return (
+    <section className="unplotted" ref={dropBack}>
+      <header>Unplotted</header>
+      <div className="unplotted-contents">
+        {employees
+          .filter((employee) => employee.box === null)
+          .map((employee) => (
+            <EmployeeCard key={employee.id} employee={employee} />
+          ))}
+      </div>
+    </section>
+  );
+};
+
+interface BiasProps {
+  title: string;
+  correlation: number;
+  pValue: number;
+}
+
+const Bias = ({ title, correlation, pValue }: BiasProps) => {
+  const isSignificant = !isNaN(pValue) && pValue < 0.05;
+  const isInsignificant = !isNaN(pValue) && pValue >= 0.05;
+
+  return (
+    <div
+      className={classNames("bias", {
+        significant: isSignificant,
+        insignificant: isInsignificant,
+      })}
+    >
+      <p className="title">{title}</p>
+      {isNaN(correlation) ? (
+        <p>Not enough data</p>
+      ) : (
+        <>
+          <p>{isSignificant ? "Significant" : "Insignificant"}</p>
+          <p>
+            C = {correlation.toFixed(2)}, p = {pValue.toFixed(4)}
+          </p>
+        </>
+      )}
     </div>
   );
 };
@@ -80,7 +190,7 @@ const Box = ({ boxNumber, handleDrop, children, ratio }: BoxProps) => {
 const App = () => {
   const [employees, setEmployees] = useState<Employee[]>(enrichedEmployeeData);
 
-  const handleDrop = (employeeId: number, boxNumber: number) => {
+  const handleDrop = (employeeId: number, boxNumber: number | null) => {
     setEmployees((prevEmployees) =>
       prevEmployees.map((employee) =>
         employee.id === employeeId ? { ...employee, box: boxNumber } : employee
@@ -123,17 +233,16 @@ const App = () => {
     ratio: count / totalFilteredEmployees,
   }));
 
-  // Calculate box group ratios:
-  const topRightElbow = [6, 8, 9];
-  const bottomLeftElbow = [1, 2, 4];
-  const mainDiagonal = [3, 5, 7];
-
   const calculateGroupRatio = (groupBoxes: number[]) => {
-    const groupCount = employees.filter(
+    const groupCount = filteredEmployees.filter(
       (emp) => emp.box && groupBoxes.includes(emp.box)
     ).length;
     return groupCount / totalFilteredEmployees;
   };
+
+  const topRightElbow = [6, 8, 9];
+  const bottomLeftElbow = [1, 2, 4];
+  const mainDiagonal = [3, 5, 7];
 
   const topRightElbowRatio = calculateGroupRatio(topRightElbow);
   const bottomLeftElbowRatio = calculateGroupRatio(bottomLeftElbow);
@@ -151,6 +260,19 @@ const App = () => {
     { box: 9, performance: 2, agility: 2 },
   ];
 
+  const boxThresholds: { box: number; min?: number; max?: number }[] = [
+    { box: 9, max: 0.2 },
+  ];
+
+  const boxGroupThresholds: {
+    boxes: number[];
+    outOfRange: boolean;
+  }[] = [
+    { boxes: topRightElbow, outOfRange: topRightElbowRatio > 0.35 },
+    { boxes: bottomLeftElbow, outOfRange: bottomLeftElbowRatio < 0 },
+    { boxes: mainDiagonal, outOfRange: mainDiagonalRatio < 0 },
+  ];
+
   const employeesWithScores = filteredEmployees
     .filter((emp) => emp.box)
     .map((emp) => {
@@ -166,21 +288,21 @@ const App = () => {
     y: emp.jobLevel,
   }));
 
-  const jobLevelCorrelation = calculateCorrelation(jobLevelData);
+  const jobLevelCorrelation = calculateCorrelationWithPValue(jobLevelData);
 
   const genderData = employeesWithScores.map((emp) => ({
     x: emp.placementScore,
     y: emp.gender,
   }));
 
-  const genderCorrelation = calculateCorrelation(genderData);
+  const genderCorrelation = calculateCorrelationWithPValue(genderData);
 
   const ethnicityData = employeesWithScores.map((emp) => ({
     x: emp.placementScore,
     y: emp.ethnicity,
   }));
 
-  const ethnicityCorrelation = calculateCorrelation(ethnicityData);
+  const ethnicityCorrelation = calculateCorrelationWithPValue(ethnicityData);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -199,7 +321,6 @@ const App = () => {
         </div>
       </section>
       <section>
-        <h2>Plotted</h2>
         <div className="grid-container">
           {[7, 8, 9, 4, 5, 6, 1, 2, 3].map((boxNumber) => (
             <Box
@@ -209,6 +330,10 @@ const App = () => {
               ratio={
                 boxRatios.find((box) => box.boxNumber === boxNumber)?.ratio ?? 0
               }
+              threshold={boxThresholds.find((box) => box.box === boxNumber)}
+              hasReachedGroupThreshold={boxGroupThresholds.some(
+                (group) => group.boxes.includes(boxNumber) && group.outOfRange
+              )}
             >
               {filteredEmployees
                 .filter((employee) => employee.box === boxNumber)
@@ -219,24 +344,14 @@ const App = () => {
           ))}
         </div>
       </section>
-      <section>
-        <h2>Unplotted:</h2>
-        <div>
-          {filteredEmployees
-            .filter((employee) => employee.box === null)
-            .map((employee) => (
-              <EmployeeCard key={employee.id} employee={employee} />
-            ))}
+      <Unplotted employees={filteredEmployees} handleDrop={handleDrop} />
+      <section className="biases">
+        <header>Biases</header>
+        <div className="biases-contents">
+          <Bias title="Job level bias" {...jobLevelCorrelation} />
+          <Bias title="Gender bias" {...genderCorrelation} />
+          <Bias title="Ethnicity bias" {...ethnicityCorrelation} />
         </div>
-      </section>
-      <section>
-        <h2>Calculations:</h2>
-        <p>Top right elbow: {topRightElbowRatio}</p>
-        <p>Bottom left elbow: {bottomLeftElbowRatio}</p>
-        <p>Main diagonal: {mainDiagonalRatio}</p>
-        <p>Job level correlation: {jobLevelCorrelation}</p>
-        <p>Gender correlation: {genderCorrelation}</p>
-        <p>Ethnicity correlation: {ethnicityCorrelation}</p>
       </section>
     </DndProvider>
   );
