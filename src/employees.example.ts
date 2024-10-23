@@ -1,6 +1,15 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 
-const employeesData = [
+export interface EmployeeData {
+  name: string;
+  team: string;
+  jobLevel: number; // e.g. 1-5
+  gender: number; // 1 for men, 0 for anybody else
+  ethnicity: number; // 1 for white, 0 for anybody else
+  box?: number;
+}
+
+const employeesData: EmployeeData[] = [
   {
     name: "Daenerys Targaryen",
     jobLevel: 5,

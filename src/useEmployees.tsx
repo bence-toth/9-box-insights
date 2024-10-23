@@ -1,21 +1,23 @@
 import { useState } from "react";
 import employeeData from "./employees";
 
+import type { EmployeeData } from "./employees";
+
 const enrichedEmployeeData = employeeData
-  .sort((a, b) => a.name.localeCompare(b.name))
-  .map((employee, employeeIndex) => ({
+  .sort((a: EmployeeData, b: EmployeeData) => a.name.localeCompare(b.name))
+  .map((employee: EmployeeData, employeeIndex: number) => ({
     id: employeeIndex,
-    ...employee,
     box: null,
+    ...employee,
   }));
 
 export interface Employee {
   id: number;
   name: string;
   jobLevel: number;
-  gender: number; // 1 for male, 0 for non-male
-  ethnicity: number; // 1 for European, 0 for non-European
-  box: number | null; // box number (1-9), null if not unplotted
+  gender: number;
+  ethnicity: number;
+  box: number | null;
   team: string;
 }
 
