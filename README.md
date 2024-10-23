@@ -1,4 +1,4 @@
-# 9-box insights tool
+# 9-Box Insights
 
 If you are using the 9-box model, you can use this tool to:
 
