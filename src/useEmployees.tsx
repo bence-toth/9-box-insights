@@ -1,11 +1,13 @@
 import { useState } from "react";
 import employeeData from "./employees";
 
-const enrichedEmployeeData = employeeData.map((employee, employeeIndex) => ({
-  id: employeeIndex,
-  ...employee,
-  box: null,
-}));
+const enrichedEmployeeData = employeeData
+  .sort((a, b) => a.name.localeCompare(b.name))
+  .map((employee, employeeIndex) => ({
+    id: employeeIndex,
+    ...employee,
+    box: null,
+  }));
 
 export interface Employee {
   id: number;
