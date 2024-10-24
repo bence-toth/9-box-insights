@@ -4,6 +4,8 @@
 }
 
 .unplotted header {
+  display: flex;
+  justify-content: space-between;
   background-color: hsla(0deg 0% 0% / 10%);
   padding: 4px;
 }

@@ -14,15 +14,24 @@ const Unplotted = ({ employees, onDropEmployee }: UnplottedProps) => {
     drop: (employee: Employee) => onDropEmployee(employee.id, null),
   }));
 
+  const unplottedEmployees = employees.filter(
+    (employee) => employee.box === null
+  );
+
+  const ratio = unplottedEmployees.length / employees.length;
+
   return (
     <section className="unplotted" ref={dropBack}>
-      <header>Unplotted</header>
+      <header>
+        <div>Unplotted</div>
+        <div>
+          {unplottedEmployees.length} ppl, {(ratio * 100).toFixed(0)}%
+        </div>
+      </header>
       <div className="unplotted-contents">
-        {employees
-          .filter((employee) => employee.box === null)
-          .map((employee) => (
-            <EmployeeCard key={employee.id} employee={employee} />
-          ))}
+        {unplottedEmployees.map((employee) => (
+          <EmployeeCard key={employee.id} employee={employee} />
+        ))}
       </div>
     </section>
   );

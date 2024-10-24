@@ -8,6 +8,7 @@ interface BoxProps {
   onDropEmployee: (employeeId: number, boxNumber: number) => void;
   children: React.ReactNode;
   ratio: number;
+  count: number;
   threshold?: { min?: number; max?: number };
   hasReachedGroupThreshold: boolean;
 }
@@ -17,6 +18,7 @@ const Box = ({
   onDropEmployee,
   children,
   ratio,
+  count,
   threshold,
   hasReachedGroupThreshold,
 }: BoxProps) => {
@@ -38,7 +40,9 @@ const Box = ({
     >
       <header>
         <div>Box {boxNumber}</div>
-        <div className="ratio">{(ratio * 100).toFixed(0)}%</div>
+        <div className="ratio">
+          {count} ppl, {(ratio * 100).toFixed(0)}%
+        </div>
       </header>
       <div className="box-contents">{children}</div>
     </div>

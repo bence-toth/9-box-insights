@@ -55,6 +55,7 @@ const Boxes = ({ filteredEmployees, onDropEmployee }: BoxesProps) => {
             ratio={
               boxRatios.find((box) => box.boxNumber === boxNumber)?.ratio ?? 0
             }
+            count={boxCounts[boxNumber] ?? 0}
             threshold={boxThresholds.find((box) => box.box === boxNumber)}
             hasReachedGroupThreshold={boxGroupThresholdChecks.some(
               (group) => group.boxes.includes(boxNumber) && group.outOfRange
