@@ -14,6 +14,27 @@ const boxLayout = [1, 2, 3];
 const Boxes3 = ({ filteredEmployees, onDropEmployee }: Boxes3Props) => {
   const totalFilteredEmployees = filteredEmployees.length;
 
+  if (totalFilteredEmployees === 0) {
+    return (
+      <section>
+        <div className="box3-grid-container">
+          {boxLayout.map((boxNumber) => (
+            <Box
+              key={boxNumber}
+              boxNumber={boxNumber}
+              onDropEmployee={onDropEmployee}
+              ratio={0}
+              count={0}
+              threshold={box3Thresholds.find((box) => box.box === boxNumber)}
+              hasReachedGroupThreshold={false}
+              children={null}
+            />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   const boxCounts = filteredEmployees.reduce((acc, emp) => {
     if (emp.box) {
       acc[emp.box] = (acc[emp.box] || 0) + 1;
