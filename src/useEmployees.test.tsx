@@ -2,42 +2,24 @@ import { renderHook } from "@testing-library/react";
 import { act } from "react";
 import useEmployees from "./useEmployees";
 import type { Employee } from "./useEmployees";
+import {
+  ARYA_STARK,
+  JON_SNOW,
+  TYRION_LANNISTER,
+  HOUSE_STARK,
+} from "./test-utils/mockEmployees";
 
-// Test data constants
-const ARYA_STARK = "Arya Stark";
-const JON_SNOW = "Jon Snow";
-const TYRION_LANNISTER = "Tyrion Lannister";
-const HOUSE_STARK = "House Stark";
-const NIGHTS_WATCH = "Night's Watch";
-const HOUSE_LANNISTER = "House Lannister";
-
-// Mock the employees data
-jest.mock("./employees", () => ({
-  __esModule: true,
-  default: [
-    {
-      name: ARYA_STARK,
-      team: HOUSE_STARK,
-      jobLevel: 5,
-      gender: 0,
-      ethnicity: 1,
-    },
-    {
-      name: JON_SNOW,
-      team: NIGHTS_WATCH,
-      jobLevel: 5,
-      gender: 1,
-      ethnicity: 0,
-    },
-    {
-      name: TYRION_LANNISTER,
-      team: HOUSE_LANNISTER,
-      jobLevel: 5,
-      gender: 1,
-      ethnicity: 1,
-    },
-  ],
-}));
+// Mock the employees module using shared test data
+// Use jest.requireActual inside the factory to access the imported data
+jest.mock("./employees", () => {
+  const { mockEmployeesData } = jest.requireActual<
+    typeof import("./test-utils/mockEmployees")
+  >("./test-utils/mockEmployees");
+  return {
+    __esModule: true,
+    default: mockEmployeesData,
+  };
+});
 
 describe("useEmployees", () => {
   describe("Initial state", () => {

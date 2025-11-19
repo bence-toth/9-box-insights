@@ -2,17 +2,19 @@ import { renderHook } from "@testing-library/react";
 import { act } from "react";
 import useTeams from "./useTeams";
 import type { Employee } from "./useEmployees";
-
-// Test data constants
-const ARYA_STARK = "Arya Stark";
-const NED_STARK = "Ned Stark";
-const TYRION_LANNISTER = "Tyrion Lannister";
-const JON_SNOW = "Jon Snow";
-const SANSA_STARK = "Sansa Stark";
-const HOUSE_STARK = "House Stark";
-const HOUSE_LANNISTER = "House Lannister";
-const NIGHTS_WATCH = "Night's Watch";
-const HOUSE_TARGARYEN = "House Targaryen";
+import {
+  ARYA_STARK,
+  NED_STARK,
+  TYRION_LANNISTER,
+  JON_SNOW,
+  SANSA_STARK,
+  ROBB_STARK,
+  DAENERYS_TARGARYEN,
+  HOUSE_STARK,
+  HOUSE_LANNISTER,
+  NIGHTS_WATCH,
+  HOUSE_TARGARYEN,
+} from "./test-utils/mockEmployees";
 
 describe("useTeams", () => {
   const mockEmployees: Employee[] = [
@@ -343,7 +345,7 @@ describe("useTeams", () => {
         ...mockEmployees,
         {
           id: 5,
-          name: "Daenerys Targaryen",
+          name: DAENERYS_TARGARYEN,
           team: HOUSE_TARGARYEN,
           jobLevel: 5,
           gender: 0,
@@ -399,7 +401,7 @@ describe("useTeams", () => {
         ...mockEmployees,
         {
           id: 5,
-          name: "Robb Stark",
+          name: ROBB_STARK,
           team: HOUSE_STARK,
           jobLevel: 3,
           gender: 1,
@@ -414,9 +416,7 @@ describe("useTeams", () => {
       expect(result.current.teamFilters[HOUSE_STARK]).toBe(false);
       // And new employee should not appear in filtered results
       expect(
-        result.current.filteredEmployees.every(
-          (emp) => emp.name !== "Robb Stark"
-        )
+        result.current.filteredEmployees.every((emp) => emp.name !== ROBB_STARK)
       ).toBe(true);
     });
   });
