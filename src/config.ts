@@ -10,4 +10,18 @@ const boxGroupThresholds: {
   max?: number;
 }[] = [{ boxes: topRightElbow, max: 0.33 }];
 
-export { boxThresholds, boxGroupThresholds };
+// 3-box configuration (single dimension)
+const box3Thresholds: { box: number; min?: number; max?: number }[] = [];
+
+const box3GroupThresholds: {
+  boxes: number[];
+  min?: number;
+  max?: number;
+}[] = [{ boxes: [3], max: 0.33 }]; // High performers
+
+export {
+  boxThresholds,
+  boxGroupThresholds,
+  box3Thresholds,
+  box3GroupThresholds,
+};
