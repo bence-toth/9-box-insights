@@ -11,7 +11,7 @@ import {
 
 // Mock the employees module using shared test data
 // Use jest.requireActual inside the factory to access the imported data
-jest.mock("./employees", () => {
+jest.mock("./employees.example", () => {
   const { mockEmployeesData } = jest.requireActual<
     typeof import("./test-utils/mockEmployees")
   >("./test-utils/mockEmployees");
