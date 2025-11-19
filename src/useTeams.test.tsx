@@ -1,4 +1,5 @@
-import { renderHook, act } from "@testing-library/react";
+import { renderHook } from "@testing-library/react";
+import { act } from "react";
 import useTeams from "./useTeams";
 import type { Employee } from "./useEmployees";
 
