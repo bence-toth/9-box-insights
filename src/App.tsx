@@ -53,7 +53,7 @@ const Navigation = () => {
   );
 };
 
-const AppContent = () => {
+const App = () => {
   const { employees, onDropEmployee, unplotAllEmployees } = useEmployees();
   const { teams, teamFilters, onToggleTeam, filteredEmployees } = useTeams({
     employees,
@@ -99,10 +99,6 @@ const AppContent = () => {
       <Biases filteredEmployees={filteredEmployees} />
     </DndProvider>
   );
-};
-
-const App = () => {
-  return <AppContent />;
 };
 
 export default App;
