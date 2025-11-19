@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import employeeData from "./employees";
 
 import type { EmployeeData } from "./employees";
@@ -32,7 +32,13 @@ const useEmployees = () => {
     );
   };
 
-  return { employees, onDropEmployee };
+  const unplotAllEmployees = useCallback(() => {
+    setEmployees((prevEmployees) =>
+      prevEmployees.map((employee) => ({ ...employee, box: null }))
+    );
+  }, []);
+
+  return { employees, onDropEmployee, unplotAllEmployees };
 };
 
 export default useEmployees;

@@ -1,23 +1,23 @@
 import EmployeeCard from "./EmployeeCard";
 import Box from "./Box";
-import { boxThresholds, boxGroupThresholds } from "./config";
+import { box3Thresholds, box3GroupThresholds } from "./config";
 import type { Employee } from "./useEmployees";
-import "./Boxes.css";
+import "./Boxes3.css";
 
-interface BoxesProps {
+interface Boxes3Props {
   filteredEmployees: Employee[];
   onDropEmployee: (employeeId: number, boxNumber: number | null) => void;
 }
 
-const boxLayout = [7, 8, 9, 4, 5, 6, 1, 2, 3];
+const boxLayout = [1, 2, 3];
 
-const Boxes = ({ filteredEmployees, onDropEmployee }: BoxesProps) => {
+const Boxes3 = ({ filteredEmployees, onDropEmployee }: Boxes3Props) => {
   const totalFilteredEmployees = filteredEmployees.length;
 
   if (totalFilteredEmployees === 0) {
     return (
       <section>
-        <div className="box-grid-container">
+        <div className="box3-grid-container">
           {boxLayout.map((boxNumber) => (
             <Box
               key={boxNumber}
@@ -25,7 +25,7 @@ const Boxes = ({ filteredEmployees, onDropEmployee }: BoxesProps) => {
               onDropEmployee={onDropEmployee}
               ratio={0}
               count={0}
-              threshold={boxThresholds.find((box) => box.box === boxNumber)}
+              threshold={box3Thresholds.find((box) => box.box === boxNumber)}
               hasReachedGroupThreshold={false}
               children={null}
             />
@@ -57,7 +57,7 @@ const Boxes = ({ filteredEmployees, onDropEmployee }: BoxesProps) => {
   const boxGroupThresholdChecks: {
     boxes: number[];
     outOfRange: boolean;
-  }[] = boxGroupThresholds.map((group) => ({
+  }[] = box3GroupThresholds.map((group) => ({
     boxes: group.boxes,
     outOfRange:
       (group.min !== undefined &&
@@ -67,7 +67,7 @@ const Boxes = ({ filteredEmployees, onDropEmployee }: BoxesProps) => {
 
   return (
     <section>
-      <div className="box-grid-container">
+      <div className="box3-grid-container">
         {boxLayout.map((boxNumber) => (
           <Box
             key={boxNumber}
@@ -77,7 +77,7 @@ const Boxes = ({ filteredEmployees, onDropEmployee }: BoxesProps) => {
               boxRatios.find((box) => box.boxNumber === boxNumber)?.ratio ?? 0
             }
             count={boxCounts[boxNumber] ?? 0}
-            threshold={boxThresholds.find((box) => box.box === boxNumber)}
+            threshold={box3Thresholds.find((box) => box.box === boxNumber)}
             hasReachedGroupThreshold={boxGroupThresholdChecks.some(
               (group) => group.boxes.includes(boxNumber) && group.outOfRange
             )}
@@ -94,4 +94,4 @@ const Boxes = ({ filteredEmployees, onDropEmployee }: BoxesProps) => {
   );
 };
 
-export default Boxes;
+export default Boxes3;

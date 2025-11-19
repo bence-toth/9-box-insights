@@ -1,0 +1,10 @@
+.box3-grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+  border-bottom: 8px solid white;
+}
+
+.box3-grid-container .box {
+  height: 40vh;
+}
