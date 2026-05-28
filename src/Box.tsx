@@ -11,6 +11,8 @@ interface BoxProps {
   count: number;
   threshold?: { min?: number; max?: number };
   hasReachedGroupThreshold: boolean;
+  score: number;
+  maxScore: number;
 }
 
 const Box = ({
@@ -21,6 +23,8 @@ const Box = ({
   count,
   threshold,
   hasReachedGroupThreshold,
+  score,
+  maxScore,
 }: BoxProps) => {
   const [, drop] = useDrop(() => ({
     accept: "EMPLOYEE",
@@ -31,10 +35,14 @@ const Box = ({
     (threshold?.min && ratio < threshold?.min) ||
     (threshold?.max && ratio > threshold?.max);
 
+  // Map score to a 0-4 bucket for consistent coloring across all grid sizes
+  const colorBucket =
+    maxScore === 0 ? 2 : Math.round((score / maxScore) * 4);
+
   return (
     <div
       ref={drop}
-      className={classNames("box", `box-${boxNumber}`, {
+      className={classNames("box", `placement-score-${colorBucket}`, {
         "out-of-range": hasReachedBoxThreshold || hasReachedGroupThreshold,
       })}
     >

@@ -4,11 +4,11 @@ import { Routes, Route, Link, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import TeamFilters from "./TeamFilters";
 import Biases from "./Biases";
-import Boxes from "./Boxes";
-import Boxes3 from "./Boxes3";
+import BoxesGrid from "./BoxesGrid";
 import Unplotted from "./Unplotted";
 import useEmployees from "./useEmployees";
 import useTeams from "./useTeams";
+import gridConfigs from "./config";
 
 const Navigation = () => {
   const location = useLocation();
@@ -16,39 +16,32 @@ const Navigation = () => {
   return (
     <nav
       style={{
-        padding: "16px",
+        padding: "4px",
         backgroundColor: "#f0f0f0",
         borderBottom: "2px solid #ddd",
-        marginBottom: "16px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "8px",
       }}
     >
-      <Link
-        to="/"
-        style={{
-          marginRight: "16px",
-          padding: "8px 16px",
-          textDecoration: "none",
-          backgroundColor: location.pathname === "/" ? "#007acc" : "#fff",
-          color: location.pathname === "/" ? "#fff" : "#007acc",
-          borderRadius: "4px",
-          border: "1px solid #007acc",
-        }}
-      >
-        9-Box View
-      </Link>
-      <Link
-        to="/3-box"
-        style={{
-          padding: "8px 16px",
-          textDecoration: "none",
-          backgroundColor: location.pathname === "/3-box" ? "#007acc" : "#fff",
-          color: location.pathname === "/3-box" ? "#fff" : "#007acc",
-          borderRadius: "4px",
-          border: "1px solid #007acc",
-        }}
-      >
-        3-Box View
-      </Link>
+      {gridConfigs.map((config) => (
+        <Link
+          key={config.path}
+          to={config.path}
+          style={{
+            padding: "8px 16px",
+            textDecoration: "none",
+            backgroundColor:
+              location.pathname === config.path ? "#007acc" : "#fff",
+            color: location.pathname === config.path ? "#fff" : "#007acc",
+            borderRadius: "4px",
+            border: "1px solid #007acc",
+          }}
+        >
+          {config.label}
+        </Link>
+      ))}
     </nav>
   );
 };
@@ -64,6 +57,9 @@ const App = () => {
     unplotAllEmployees();
   }, [location.pathname, unplotAllEmployees]);
 
+  const activeConfig =
+    gridConfigs.find((c) => c.path === location.pathname) ?? gridConfigs[0];
+
   return (
     <DndProvider backend={HTML5Backend}>
       <Navigation />
@@ -73,30 +69,25 @@ const App = () => {
         onToggleTeam={onToggleTeam}
       />
       <Routes>
-        <Route
-          path="/"
-          element={
-            <Boxes
-              filteredEmployees={filteredEmployees}
-              onDropEmployee={onDropEmployee}
-            />
-          }
-        />
-        <Route
-          path="/3-box"
-          element={
-            <Boxes3
-              filteredEmployees={filteredEmployees}
-              onDropEmployee={onDropEmployee}
-            />
-          }
-        />
+        {gridConfigs.map((config) => (
+          <Route
+            key={config.path}
+            path={config.path}
+            element={
+              <BoxesGrid
+                filteredEmployees={filteredEmployees}
+                onDropEmployee={onDropEmployee}
+                config={config}
+              />
+            }
+          />
+        ))}
       </Routes>
       <Unplotted
         employees={filteredEmployees}
         onDropEmployee={onDropEmployee}
       />
-      <Biases filteredEmployees={filteredEmployees} />
+      <Biases filteredEmployees={filteredEmployees} config={activeConfig} />
     </DndProvider>
   );
 };

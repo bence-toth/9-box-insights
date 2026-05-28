@@ -1,0 +1,7 @@
+section:has(.box-grid-container) {
+  display: grid;
+}
+
+.box-grid-container {
+  display: grid;
+}

@@ -1,34 +1,22 @@
 import Bias from "./Bias";
 import { calculateCorrelationWithPValue } from "./utility";
+import { getBoxScore } from "./BoxesGrid";
 import type { Employee } from "./useEmployees";
+import type { GridConfig } from "./config";
 import "./Biases.css";
-
-const boxScores = [
-  { box: 1, performance: 0, agility: 0 },
-  { box: 2, performance: 1, agility: 0 },
-  { box: 3, performance: 2, agility: 0 },
-  { box: 4, performance: 0, agility: 1 },
-  { box: 5, performance: 1, agility: 1 },
-  { box: 6, performance: 2, agility: 1 },
-  { box: 7, performance: 0, agility: 2 },
-  { box: 8, performance: 1, agility: 2 },
-  { box: 9, performance: 2, agility: 2 },
-];
 
 interface BiasesProps {
   filteredEmployees: Employee[];
+  config: GridConfig;
 }
 
-const Biases = ({ filteredEmployees }: BiasesProps) => {
+const Biases = ({ filteredEmployees, config }: BiasesProps) => {
   const employeesWithScores = filteredEmployees
     .filter((employee) => employee.box)
-    .map((employee) => {
-      const scores = boxScores.find((score) => score.box === employee.box)!;
-      return {
-        ...employee,
-        placementScore: scores.performance + scores.agility,
-      };
-    });
+    .map((employee) => ({
+      ...employee,
+      placementScore: getBoxScore(employee.box!, config.numberOfColumns),
+    }));
 
   const jobLevelData = employeesWithScores.map((employee) => ({
     x: employee.placementScore,
