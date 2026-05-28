@@ -1,6 +1,6 @@
 # 9-Box Insights
 
-A visual tool for analyzing talent distributions using the 9-box or 3-box performance models. This application helps people managers make data-driven decisions about talent management while identifying potential biases in performance evaluations.
+A visual tool for analyzing talent distributions across configurable rating grid layouts like 9-box or 1-5 rating. This application helps people managers make data-driven decisions about talent management while identifying potential biases in performance evaluations.
 
 ## Features
 
@@ -53,10 +53,9 @@ A visual tool for analyzing talent distributions using the 9-box or 3-box perfor
    ```
 
 4. **Configure thresholds**
-   Edit `src/config.ts` to define your desired distribution thresholds:
-
-   - `boxThresholds` / `box3Thresholds`: Individual box limits
-   - `boxGroupThresholds` / `box3GroupThresholds`: Group box limits
+   Edit `src/config.ts` to define your grid layouts and distribution thresholds.
+   Each entry in the `gridConfigs` array defines one view: its label, URL path,
+   grid dimensions, and threshold rules.
 
 5. **Start the application**
 
@@ -67,7 +66,7 @@ A visual tool for analyzing talent distributions using the 9-box or 3-box perfor
    Then click the link in the terminal to open the app in your browser.
 
 6. **Start plotting**
-   - Switch between 9-Box and 3-Box views using navigation (careful though, this unplots all plotted employees)
+   - Switch between grid views using navigation (this unplots all plotted employees)
    - Use team filters to narrow your view
    - Drag employees from the "Unplotted" section to their respective boxes
    - Review bias analysis at the bottom of the page
@@ -86,22 +85,31 @@ Regardless of that safeguard, please _always_ keep in mind that you should:
 
 ## Configuration Options
 
-### Threshold Configuration
+### Grid and Threshold Configuration
 
-Define acceptable ranges for employee distributions in `src/config.ts`:
+Define grid layouts and acceptable distribution ranges in `src/config.ts`.
+Each entry in the `gridConfigs` array defines one navigable view:
 
 ```typescript
-// Individual box thresholds
-const boxThresholds = [
-  { box: 9, min: 0.05, max: 0.15 }, // Top-right box: 5-15%
-];
-
-// Group thresholds (e.g., top-right elbow)
-const topRightElbow = [6, 8, 9];
-const boxGroupThresholds = [
-  { boxes: topRightElbow, max: 0.33 }, // Combined: max 33%
+const gridConfigs: GridConfig[] = [
+  {
+    label: "9-Box", // label shown in navigation
+    path: "/", // URL path for this view
+    numberOfColumns: 3,
+    numberOfRows: 3,
+    boxThresholds: [
+      { box: 9, min: 0.05, max: 0.15 }, // top-right box: 5–15%
+    ],
+    boxGroupThresholds: [
+      { boxes: [7, 8, 9], max: 0.33 }, // top-right elbow: max 33%
+    ],
+  },
+  // Add more grid shapes here (e.g. 1-3 rating, 1-5 rating)
 ];
 ```
+
+- `boxThresholds`: per-box percentage limits (identified by box number, counting left-to-right, bottom-to-top)
+- `boxGroupThresholds`: combined limits for a set of boxes
 
 ## Development
 
@@ -160,6 +168,7 @@ The project includes unit tests for core functionality:
 - Employee data management (`useEmployees.test.tsx`)
 - Team filtering logic (`useTeams.test.tsx`)
 - Utility functions (`utility.test.ts`)
+- Grid layout and scoring logic (`BoxesGrid.test.ts`)
 
 Run tests with `npm test` or generate coverage reports with `npm run test:coverage`.
 
