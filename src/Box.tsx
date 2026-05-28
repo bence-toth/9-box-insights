@@ -36,8 +36,7 @@ const Box = ({
     (threshold?.max && ratio > threshold?.max);
 
   // Map score to a 0-4 bucket for consistent coloring across all grid sizes
-  const colorBucket =
-    maxScore === 0 ? 2 : Math.round((score / maxScore) * 4);
+  const colorBucket = maxScore === 0 ? 2 : Math.round((score / maxScore) * 4);
 
   return (
     <div

@@ -44,7 +44,8 @@ const BoxesGrid = ({
   const boxGroupThresholdChecks = boxGroupThresholds.map((group) => ({
     boxes: group.boxes,
     outOfRange:
-      (group.min !== undefined && calculateGroupRatio(group.boxes) < group.min) ||
+      (group.min !== undefined &&
+        calculateGroupRatio(group.boxes) < group.min) ||
       (group.max !== undefined && calculateGroupRatio(group.boxes) > group.max),
   }));
 
