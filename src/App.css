@@ -1,0 +1,23 @@
+.nav {
+  padding: 4px;
+  background-color: #f0f0f0;
+  border-bottom: 2px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  text-decoration: none;
+  background-color: #fff;
+  color: #007acc;
+  border-radius: 4px;
+  border: 1px solid #007acc;
+}
+
+.nav-link.active {
+  background-color: #007acc;
+  color: #fff;
+}
