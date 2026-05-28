@@ -1,6 +1,6 @@
 import Bias from "./Bias";
 import { calculateCorrelationWithPValue } from "./utility";
-import { getBoxScore } from "./BoxesGrid";
+import { getBoxScore } from "./boxesGridUtils";
 import type { Employee } from "./useEmployees";
 import type { GridConfig } from "./config";
 import "./Biases.css";
