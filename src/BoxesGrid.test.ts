@@ -150,11 +150,11 @@ describe("gridConfigs", () => {
   it("should have threshold min/max values between 0 and 1", () => {
     gridConfigs.forEach((config) => {
       config.boxThresholds.forEach((t) => {
-        if (t.min !== undefined) expect(t.min).toBeGreaterThanOrEqual(0);
-        if (t.max !== undefined) expect(t.max).toBeLessThanOrEqual(1);
-        if (t.min !== undefined && t.max !== undefined) {
-          expect(t.min).toBeLessThanOrEqual(t.max);
-        }
+        const min = t.min ?? 0;
+        const max = t.max ?? 1;
+        expect(min).toBeGreaterThanOrEqual(0);
+        expect(max).toBeLessThanOrEqual(1);
+        expect(min).toBeLessThanOrEqual(max);
       });
     });
   });
