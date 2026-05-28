@@ -7,8 +7,13 @@
 }
 
 html,
-body,
+body {
+  height: 100%;
+}
+
 #root {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto auto;
   min-height: 100%;
 }
 
@@ -18,6 +23,7 @@ body {
   font-size: 14px;
   font-optical-sizing: auto;
   user-select: none;
-  border: 8px solid white;
   background-color: white;
+  margin: 0;
+  padding: 0;
 }
